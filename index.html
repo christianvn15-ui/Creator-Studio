@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Creator Studio</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+  <meta name="theme-color" content="#111317" />
+  <link rel="icon" href="icons/icon-192.png" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>Creator Studio</h1>
+    <button id="installBtn" class="btn ghost">Install</button>
+  </header>
+
+  <nav class="tabs">
+    <button data-page="ai" class="tab active">AI Planner</button>
+    <button data-page="notes" class="tab">Notes</button>
+    <button data-page="sandbox" class="tab">3D Sandbox</button>
+    <button data-page="code" class="tab">Code Space</button>
+    <button data-page="profile" class="tab">Profile</button>
+  </nav>
+
+  <main>
+    <!-- AI Planner -->
+    <section id="page-ai" class="page active">
+      <div class="panel">
+        <h2>AI Planner</h2>
+        <div class="ai-chat">
+          <div id="chatLog" class="chat-log"></div>
+          <form id="chatForm" class="chat-form">
+            <input id="chatInput" type="text" placeholder="Describe your idea..." required />
+            <button class="btn primary" type="submit">Ask</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Notes -->
+    <section id="page-notes" class="page">
+      <div class="panel">
+        <div class="row between">
+          <h2>Notes</h2>
+          <button id="newProjectBtn" class="btn primary">New Project</button>
+        </div>
+        <div id="projectsList" class="cards"></div>
+      </div>
+
+      <!-- Notes Modal -->
+      <dialog id="notesModal" class="modal">
+        <form method="dialog" class="modal-body">
+          <div class="row between">
+            <h3 id="modalTitle">Project Notes</h3>
+            <button id="closeNotes" class="btn ghost" type="button">Close</button>
+          </div>
+          <label class="field">
+            <span class="label">Note title</span>
+            <input id="noteTitle" type="text" placeholder="e.g., Prototype v1" />
+          </label>
+          <label class="field">
+            <span class="label">Content</span>
+            <textarea id="noteContent" rows="8" placeholder="Write your ideas..."></textarea>
+          </label>
+          <div class="row gap">
+            <button id="saveNote" class="btn primary" type="button">Save note</button>
+            <button id="newNote" class="btn" type="button">New note</button>
+          </div>
+          <hr />
+          <div>
+            <h4>Notes in this project</h4>
+            <ul id="notesList" class="list"></ul>
+          </div>
+        </form>
+      </dialog>
+
+      <!-- New Project Modal -->
+      <dialog id="projectModal" class="modal">
+        <form method="dialog" class="modal-body">
+          <div class="row between">
+            <h3>New project</h3>
+            <button id="closeProject" class="btn ghost" type="button">Close</button>
+          </div>
+          <label class="field">
+            <span class="label">Project title</span>
+            <input id="projectTitle" type="text" placeholder="e.g., Smart Desk" required />
+          </label>
+          <button id="createProject" class="btn primary" type="button">Create</button>
+        </form>
+      </dialog>
+    </section>
+
+    <!-- 3D Sandbox -->
+    <section id="page-sandbox" class="page">
+      <div class="panel">
+        <div class="row between">
+          <h2>3D Sandbox</h2>
+          <div class="row gap">
+            <button id="resetScene" class="btn">Reset</button>
+            <button id="addCube" class="btn">Add cube</button>
+            <button id="addSphere" class="btn">Add sphere</button>
+          </div>
+        </div>
+        <div id="sandboxWrap" class="sandbox">
+          <canvas id="sandboxCanvas"></canvas>
+        </div>
+        <p class="hint">Pinch to zoom, drag to orbit, two-finger drag to pan.</p>
+      </div>
+      <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+      <script src="https://unpkg.com/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+    </section>
+
+    <!-- Code Space -->
+    <section id="page-code" class="page">
+      <div class="panel">
+        <div class="row between">
+          <h2>Code Space</h2>
+          <div class="row gap">
+            <select id="codeType" class="select">
+              <option value="html">HTML</option>
+              <option value="js">JavaScript</option>
+              <option value="css">CSS</option>
+              <option value="json">JSON</option>
+              <option value="txt">Text</option>
+            </select>
+            <button id="newFileBtn" class="btn">New file</button>
+            <button id="saveFileBtn" class="btn primary">Save file</button>
+          </div>
+        </div>
+        <label class="field">
+          <span class="label">Filename</span>
+          <input id="fileName" type="text" placeholder="e.g., app.html" />
+        </label>
+        <textarea id="codeEditor" class="code-editor" spellcheck="false" placeholder="Write code here..."></textarea>
+        <details class="preview">
+          <summary>Preview (HTML/JS/CSS)</summary>
+          <iframe id="previewFrame" title="Preview"></iframe>
+        </details>
+        <div>
+          <h4>Saved files</h4>
+          <ul id="filesList" class="list"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Profile & File Manager -->
+    <section id="page-profile" class="page">
+      <div class="panel">
+        <div class="row between">
+          <h2>Profile</h2>
+          <button id="openLibrary" class="btn">Open library</button>
+        </div>
+        <div class="profile">
+          <img src="assets/placeholder.png" alt="Profile" class="pfp" />
+          <div>
+            <div class="field">
+              <span class="label">Display name</span>
+              <input id="displayName" type="text" placeholder="Your name" />
+            </div>
+            <div class="field">
+              <span class="label">Bio</span>
+              <textarea id="bio" rows="3" placeholder="Short bio..."></textarea>
+            </div>
+            <button id="saveProfile" class="btn primary">Save profile</button>
+          </div>
+        </div>
+
+        <h3>Your projects</h3>
+        <div id="profileProjects" class="cards"></div>
+      </div>
+
+      <!-- Library Modal -->
+      <dialog id="libraryModal" class="modal">
+        <form method="dialog" class="modal-body">
+          <div class="row between">
+            <h3>Library</h3>
+            <button id="closeLibrary" class="btn ghost" type="button">Close</button>
+          </div>
+          <div class="tabs small">
+            <button data-lib="projects" class="tab small active">Projects</button>
+            <button data-lib="notes" class="tab small">Notes</button>
+            <button data-lib="files" class="tab small">Files</button>
+            <button data-lib="sandbox" class="tab small">3D Scenes</button>
+            <button data-lib="profile" class="tab small">Profile</button>
+          </div>
+          <div id="libraryContent" class="library"></div>
+        </form>
+      </dialog>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Offline-ready • Installable • Local-first</span>
+  </footer>
+
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
