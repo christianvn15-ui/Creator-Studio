@@ -34,59 +34,49 @@
             <input id="chatInput" type="text" placeholder="Describe your idea..." required />
             <button class="btn primary" type="submit">Ask</button>
           </form>
+          <details class="hint">
+            <summary>API settings</summary>
+            <div class="row gap">
+              <input id="openaiKey" type="password" placeholder="OpenAI API key (sk-...)" />
+              <input id="openaiModel" type="text" placeholder="Model (e.g., gpt-4o-mini)" />
+              <button id="saveAiSettings" class="btn">Save</button>
+            </div>
+            <p class="muted">If no key is set, the local planner will respond offline.</p>
+          </details>
         </div>
       </div>
     </section>
 
-    <!-- Notes -->
+    <!-- Notes (Samsung-style) -->
     <section id="page-notes" class="page">
       <div class="panel">
         <div class="row between">
           <h2>Notes</h2>
-          <button id="newProjectBtn" class="btn primary">New Project</button>
+          <div class="row gap">
+            <input id="notesSearch" type="text" placeholder="Search notes..." />
+            <button id="newNoteBtn" class="btn primary">New note</button>
+          </div>
         </div>
-        <div id="projectsList" class="cards"></div>
+
+        <div id="notesGrid" class="notes-grid"></div>
       </div>
 
-      <!-- Notes Modal -->
-      <dialog id="notesModal" class="modal">
-        <form method="dialog" class="modal-body">
+      <!-- Note editor sheet -->
+      <dialog id="noteSheet" class="sheet">
+        <form method="dialog" class="sheet-body">
           <div class="row between">
-            <h3 id="modalTitle">Project Notes</h3>
-            <button id="closeNotes" class="btn ghost" type="button">Close</button>
+            <input id="noteTitle" class="note-title" type="text" placeholder="Title" />
+            <div class="row gap">
+              <button id="pinNote" class="btn">Pin</button>
+              <button id="deleteNote" class="btn danger">Delete</button>
+              <button id="closeNote" class="btn ghost" type="button">Close</button>
+            </div>
           </div>
-          <label class="field">
-            <span class="label">Note title</span>
-            <input id="noteTitle" type="text" placeholder="e.g., Prototype v1" />
-          </label>
-          <label class="field">
-            <span class="label">Content</span>
-            <textarea id="noteContent" rows="8" placeholder="Write your ideas..."></textarea>
-          </label>
-          <div class="row gap">
-            <button id="saveNote" class="btn primary" type="button">Save note</button>
-            <button id="newNote" class="btn" type="button">New note</button>
+          <textarea id="noteContent" class="note-content" rows="14" placeholder="Write your ideas..."></textarea>
+          <div class="row between muted">
+            <span id="noteMeta"></span>
+            <button id="saveNote" class="btn primary" type="button">Save</button>
           </div>
-          <hr />
-          <div>
-            <h4>Notes in this project</h4>
-            <ul id="notesList" class="list"></ul>
-          </div>
-        </form>
-      </dialog>
-
-      <!-- New Project Modal -->
-      <dialog id="projectModal" class="modal">
-        <form method="dialog" class="modal-body">
-          <div class="row between">
-            <h3>New project</h3>
-            <button id="closeProject" class="btn ghost" type="button">Close</button>
-          </div>
-          <label class="field">
-            <span class="label">Project title</span>
-            <input id="projectTitle" type="text" placeholder="e.g., Smart Desk" required />
-          </label>
-          <button id="createProject" class="btn primary" type="button">Create</button>
         </form>
       </dialog>
     </section>
@@ -100,6 +90,7 @@
             <button id="resetScene" class="btn">Reset</button>
             <button id="addCube" class="btn">Add cube</button>
             <button id="addSphere" class="btn">Add sphere</button>
+            <button id="saveSceneBtn" class="btn">Save scene</button>
           </div>
         </div>
         <div id="sandboxWrap" class="sandbox">
@@ -107,44 +98,51 @@
         </div>
         <p class="hint">Pinch to zoom, drag to orbit, two-finger drag to pan.</p>
       </div>
-      <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
-      <script src="https://unpkg.com/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
     </section>
 
-    <!-- Code Space -->
+    <!-- Code Space (Acode-like) -->
     <section id="page-code" class="page">
       <div class="panel">
         <div class="row between">
           <h2>Code Space</h2>
           <div class="row gap">
-            <select id="codeType" class="select">
-              <option value="html">HTML</option>
-              <option value="js">JavaScript</option>
-              <option value="css">CSS</option>
-              <option value="json">JSON</option>
-              <option value="txt">Text</option>
-            </select>
             <button id="newFileBtn" class="btn">New file</button>
             <button id="saveFileBtn" class="btn primary">Save file</button>
           </div>
         </div>
-        <label class="field">
-          <span class="label">Filename</span>
-          <input id="fileName" type="text" placeholder="e.g., app.html" />
-        </label>
-        <textarea id="codeEditor" class="code-editor" spellcheck="false" placeholder="Write code here..."></textarea>
-        <details class="preview">
-          <summary>Preview (HTML/JS/CSS)</summary>
-          <iframe id="previewFrame" title="Preview"></iframe>
-        </details>
-        <div>
-          <h4>Saved files</h4>
-          <ul id="filesList" class="list"></ul>
+
+        <div class="code-layout">
+          <aside class="file-tree">
+            <div class="row between">
+              <strong>Files</strong>
+              <button id="deleteFileBtn" class="btn danger">Delete</button>
+            </div>
+            <ul id="filesList" class="list"></ul>
+          </aside>
+
+          <section class="editor-pane">
+            <div class="row gap tabs small" id="codeTabs"></div>
+            <div class="row gap">
+              <select id="codeType" class="select">
+                <option value="html">HTML</option>
+                <option value="js">JavaScript</option>
+                <option value="css">CSS</option>
+                <option value="json">JSON</option>
+                <option value="txt">Text</option>
+              </select>
+              <input id="fileName" type="text" placeholder="e.g., app.html" />
+            </div>
+            <textarea id="codeEditor" class="code-editor" spellcheck="false" placeholder="Write code here..."></textarea>
+            <details class="preview">
+              <summary>Preview</summary>
+              <iframe id="previewFrame" title="Preview"></iframe>
+            </details>
+          </section>
         </div>
       </div>
     </section>
 
-    <!-- Profile & File Manager -->
+    <!-- Profile & Library -->
     <section id="page-profile" class="page">
       <div class="panel">
         <div class="row between">
@@ -152,7 +150,8 @@
           <button id="openLibrary" class="btn">Open library</button>
         </div>
         <div class="profile">
-          <img src="assets/placeholder.png" alt="Profile" class="pfp" />
+          <img id="pfp" src="assets/placeholder.png" alt="Profile" class="pfp" />
+          <input id="pfpInput" type="file" accept="image/*" hidden />
           <div>
             <div class="field">
               <span class="label">Display name</span>
@@ -166,7 +165,7 @@
           </div>
         </div>
 
-        <h3>Your projects</h3>
+        <h3>Your notes</h3>
         <div id="profileProjects" class="cards"></div>
       </div>
 
@@ -178,8 +177,7 @@
             <button id="closeLibrary" class="btn ghost" type="button">Close</button>
           </div>
           <div class="tabs small">
-            <button data-lib="projects" class="tab small active">Projects</button>
-            <button data-lib="notes" class="tab small">Notes</button>
+            <button data-lib="notes" class="tab small active">Notes</button>
             <button data-lib="files" class="tab small">Files</button>
             <button data-lib="sandbox" class="tab small">3D Scenes</button>
             <button data-lib="profile" class="tab small">Profile</button>
@@ -193,6 +191,7 @@
   <footer class="footer">
     <span>Offline-ready • Installable • Local-first</span>
   </footer>
+
   <script type="module" src="app.js"></script>
 </body>
 </html>
